@@ -1,0 +1,24 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C# Express 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chuck The Shillelagh", "Chuck The Shillelagh\Chuck The Shillelagh\Chuck The Shillelagh.csproj", "{E8D28333-D920-4D48-AA0C-E283AA0D3AA2}"
+EndProject
+Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "Chuck The ShillelaghContent", "Chuck The Shillelagh\Chuck The ShillelaghContent\Chuck The ShillelaghContent.contentproj", "{0F594FB6-140D-4AD1-B031-1490ECD1A748}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E8D28333-D920-4D48-AA0C-E283AA0D3AA2}.Debug|x86.ActiveCfg = Debug|x86
+		{E8D28333-D920-4D48-AA0C-E283AA0D3AA2}.Debug|x86.Build.0 = Debug|x86
+		{E8D28333-D920-4D48-AA0C-E283AA0D3AA2}.Release|x86.ActiveCfg = Release|x86
+		{E8D28333-D920-4D48-AA0C-E283AA0D3AA2}.Release|x86.Build.0 = Release|x86
+		{0F594FB6-140D-4AD1-B031-1490ECD1A748}.Debug|x86.ActiveCfg = Debug|x86
+		{0F594FB6-140D-4AD1-B031-1490ECD1A748}.Release|x86.ActiveCfg = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
