@@ -21,22 +21,23 @@ namespace Chuck_The_Shillelagh {
         public Texture2D pixel;
         public WeaponState state = WeaponState.Aiming;
 
-        public Vector2 fulcrum;
+        public Vector2 position_center;
+        public Rectangle rect_center;
         public float angle = 0.0f;
 
         public Weapon() {
-            scale = 1 / 20f;
+            scale = 1 / 10f;
             velocity_max = 10;
 
-            fulcrum = new Vector2(Globals.ScreenWidth / 2,
-                                  Globals.ScreenHeight - 20);
+            position_center = new Vector2(Globals.ScreenWidth / 2,
+                                          Globals.ScreenHeight - 20);
             ResetPosition();
         }
 
         public override void LoadContent(ContentManager Content) {
             anim = new AnimatedTexture2D(1, 10);
             for (int i = 0; i < anim.textures.Length; i++) {
-                anim.textures[i] = Content.Load<Texture2D>("circle");
+                anim.textures[i] = Content.Load<Texture2D>("Shillelagh1");
             }
 
             pixel = Content.Load<Texture2D>("pixel");
@@ -50,13 +51,18 @@ namespace Chuck_The_Shillelagh {
                 MoveWithKeyboard(game.kb);
                 MoveWithGamePad(game.pad1);
 
-                position.X = (float) (fulcrum.X + 50 * Math.Sin(angle));
-                position.Y = (float) (fulcrum.Y - 50 * Math.Cos(angle));
+                position.X = (float) (rect_center.Center.X + 50 * Math.Sin(angle));
+                position.Y = (float) (rect_center.Center.Y - 50 * Math.Cos(angle));
 
                 if (game.kb.IsKeyDown(Keys.Space)) {
                     state = WeaponState.Moving;
                 }
+                if (game.pad1.Triggers.Right > .5)
+                {
+                    state = WeaponState.Moving;
+                }
                 break;
+
             case WeaponState.Moving:
 
                 position.X += (float) (3 * velocity_max * Math.Sin(angle));
@@ -79,22 +85,30 @@ namespace Chuck_The_Shillelagh {
             int width = (int) (texture.Width * scale);
             int height = (int) (texture.Height * scale);
 
-            int x = (int) (fulcrum.X - width / 2);
-            int y = (int) (fulcrum.Y - height / 2);
+            int x = (int) (position.X - width / 2);
+            int y = (int) (position.Y - height / 2);
 
             rect = new Rectangle(x, y, width, height);
 
             spriteBatch.Draw(texture, rect, Color.White);
 
-            // Draw target point
-            Rectangle rect_target = new Rectangle((int) position.X - 5, (int) position.Y - 5,
-                                                   10, 10);
-            spriteBatch.Draw(pixel, rect_target, Color.Black);
+            // Draw center 
+            rect_center = new Rectangle((int) position_center.X - 5,
+                                        (int) position_center.Y - 5,
+                                         10, 10);
+
+            spriteBatch.Draw(pixel, rect_center, Color.Black);
         }
 
         public override void MoveWithGamePad(GamePadState pad1) {
-            // TODO
-            base.MoveWithGamePad(pad1);
+            if (pad1.ThumbSticks.Left.X > 0)
+            {
+                angle += 0.1f;
+            }
+            if (pad1.ThumbSticks.Left.X < 0)
+            {
+                angle -= 0.1f;
+            }
         }
 
         public override void MoveWithKeyboard(KeyboardState kb) {

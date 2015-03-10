@@ -54,7 +54,7 @@ namespace Chuck_The_Shillelagh {
             Globals.ScreenWidth = GraphicsDevice.Viewport.Width;
             Globals.ScreenHeight = GraphicsDevice.Viewport.Height;
 
-            lep = new Leprechaun(LeprechaunState.Level1);
+            lep = new LeprechaunLevel1();
             weapon = new Weapon();
 
             base.Initialize();
@@ -102,6 +102,13 @@ namespace Chuck_The_Shillelagh {
             // Store states for next frame
             pad1_old = pad1;
             kb_old = kb;
+
+            if (weapon.rect.Intersects(lep.rect))
+            {
+                lep.health -= 1;
+                weapon.state = WeaponState.Aiming;
+            }
+                
 
             base.Update(gameTime);
         }
