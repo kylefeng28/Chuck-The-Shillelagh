@@ -14,6 +14,7 @@ namespace Chuck_The_Shillelagh {
     public class Leprechaun : Sprite {
         public AnimatedTexture2D anim;
         public Texture2D healthbar;
+        public Texture2D LepFaint;
 
         public bool KOd = false;
         public int health;
@@ -33,13 +34,21 @@ namespace Chuck_The_Shillelagh {
             }
 
             healthbar = Content.Load<Texture2D>("pixel");
+            LepFaint = Content.Load<Texture2D>("LepFainted");
 
             base.LoadContent(Content);
         }
 
         public override void Update(Game1 game) {
-            MoveAround(Globals.ScreenWidth / 2 - 100, Globals.ScreenWidth / 2 + 100);
 
+            if (!KOd) {
+                MoveAround(Globals.ScreenWidth / 2 - 100, Globals.ScreenWidth / 2 + 100);
+            }
+            else { }
+
+            if (health <= 0) {
+                KOd = true;
+            }
 
 
             base.Update(game);
@@ -51,7 +60,7 @@ namespace Chuck_The_Shillelagh {
             }
 
             else {
-                // TODO
+                texture = LepFaint;
             }
 
             Rectangle health_rect = new Rectangle(rect.X, rect.Y, 10 * health, 10);
@@ -68,45 +77,21 @@ namespace Chuck_The_Shillelagh {
         }
     }
 
-
-    /*
-    switch (state) {
-    case LeprechaunState.Level1:
-        health = 6;
-        velocity_max = 5;
-        break;
-    case LeprechaunState.Level2:
-        health = 5;
-        velocity_max = 8;
-        break;
-    case LeprechaunState.Level3:
-        health = 4;
-        velocity_max = 10;
-        break;
-    }
-     */
-
     /* Child classes */
-    class LeprechaunLevel1 : Leprechaun
-    {
-        public LeprechaunLevel1()
-        {
+    public class LeprechaunLevel1 : Leprechaun {
+        public LeprechaunLevel1() {
             health = 6;
-            velocity_max = 5;  
+            velocity_max = 5;
         }
     }
-    class LeprechaunLevel2 : Leprechaun
-    {
-        public LeprechaunLevel2()
-        {
+    public class LeprechaunLevel2 : Leprechaun {
+        public LeprechaunLevel2() {
             health = 5;
             velocity_max = 8;
         }
     }
-    class LeprechaunLevel3 : Leprechaun
-    {
-        public LeprechaunLevel3()
-        {
+    public class LeprechaunLevel3 : Leprechaun {
+        public LeprechaunLevel3() {
             health = 4;
             velocity_max = 10;
         }

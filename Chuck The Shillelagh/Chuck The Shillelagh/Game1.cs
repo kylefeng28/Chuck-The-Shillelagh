@@ -32,8 +32,10 @@ namespace Chuck_The_Shillelagh {
         public GameState state = GameState.Level1;
 
         // Game objects
-        public Leprechaun lep;
+        public Leprechaun lep1, lep2, lep3;
         public Weapon weapon;
+        public MoodLight mood;
+        public Song Irish;
 
         // I/O states
         public GamePadState pad1, pad1_old;
@@ -54,8 +56,11 @@ namespace Chuck_The_Shillelagh {
             Globals.ScreenWidth = GraphicsDevice.Viewport.Width;
             Globals.ScreenHeight = GraphicsDevice.Viewport.Height;
 
-            lep = new LeprechaunLevel1();
+            lep1 = new LeprechaunLevel1();
+            lep2 = new LeprechaunLevel2();
+            lep3 = new LeprechaunLevel3();
             weapon = new Weapon();
+            mood = new MoodLight(77, 126, 249);
 
             base.Initialize();
         }
@@ -69,8 +74,11 @@ namespace Chuck_The_Shillelagh {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             Fonts.LoadContent(Content);
-            lep.LoadContent(Content);
+            lep1.LoadContent(Content);
             weapon.LoadContent(Content);
+            Irish = Content.Load<Song>("Irish dancing music Reel");
+
+            MediaPlayer.Play(Irish);
         }
 
         /// <summary>
@@ -96,16 +104,16 @@ namespace Chuck_The_Shillelagh {
                 this.Exit();
             }
 
-            lep.Update(this);
+            lep1.Update(this);
             weapon.Update(this);
 
             // Store states for next frame
             pad1_old = pad1;
             kb_old = kb;
 
-            if (weapon.rect.Intersects(lep.rect))
+            if (weapon.rect.Intersects(lep1.rect))
             {
-                lep.health -= 1;
+                lep1.health -= 1;
                 weapon.state = WeaponState.Aiming;
             }
                 
@@ -118,10 +126,13 @@ namespace Chuck_The_Shillelagh {
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime) {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            Color color = mood.color;
+            // Color color = mood.NextColor();
+
+            GraphicsDevice.Clear(color);
 
             spriteBatch.Begin();
-            lep.Draw(spriteBatch);
+            lep1.Draw(spriteBatch);
             weapon.Draw(spriteBatch);
             spriteBatch.End();
 

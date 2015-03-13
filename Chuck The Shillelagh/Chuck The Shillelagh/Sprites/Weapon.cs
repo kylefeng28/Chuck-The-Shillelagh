@@ -27,10 +27,7 @@ namespace Chuck_The_Shillelagh {
 
         public Weapon() {
             scale = 1 / 10f;
-            velocity_max = 10;
-
-            position_center = new Vector2(Globals.ScreenWidth / 2,
-                                          Globals.ScreenHeight - 20);
+            velocity_max = 30;
             ResetPosition();
         }
 
@@ -65,12 +62,11 @@ namespace Chuck_The_Shillelagh {
 
             case WeaponState.Moving:
 
-                position.X += (float) (3 * velocity_max * Math.Sin(angle));
-                position.Y -= (float) (3 * velocity_max * Math.Cos(angle));
+                position.X += (float) (velocity_max * Math.Sin(angle));
+                position.Y -= (float) (velocity_max * Math.Cos(angle));
 
                 if (position.Y < 0 || position.X < 0 || position.X > Globals.ScreenWidth) {
                     state = WeaponState.Aiming;
-                    ResetPosition();
                 }
                 break;
             }
@@ -101,13 +97,17 @@ namespace Chuck_The_Shillelagh {
         }
 
         public override void MoveWithGamePad(GamePadState pad1) {
-            if (pad1.ThumbSticks.Left.X > 0)
-            {
-                angle += 0.1f;
+            if (pad1.ThumbSticks.Left.X > 0) {
+                position_center.X += pad1.ThumbSticks.Left.X * velocity_max / 3;
             }
-            if (pad1.ThumbSticks.Left.X < 0)
-            {
-                angle -= 0.1f;
+            if (pad1.ThumbSticks.Left.X < 0) {
+                position_center.X += pad1.ThumbSticks.Left.X * velocity_max / 3;
+            }
+            if (pad1.ThumbSticks.Right.X > 0) {
+                angle += pad1.ThumbSticks.Right.X * 0.1f;
+            }
+            if (pad1.ThumbSticks.Right.X < 0) {
+                angle += pad1.ThumbSticks.Right.X * 0.1f;
             }
         }
 
@@ -118,9 +118,17 @@ namespace Chuck_The_Shillelagh {
             if (kb.IsKeyDown(Keys.A)) {
                 angle -= 0.1f;
             }
+            if (kb.IsKeyDown(Keys.Right)) {
+                position_center.X += velocity_max / 3;
+            }
+            if (kb.IsKeyDown(Keys.Left)) {
+                position_center.X -= velocity_max / 3;
+            }
         }
 
         public void ResetPosition() {
+            position_center = new Vector2(Globals.ScreenWidth / 2,
+                                          Globals.ScreenHeight - 20);
             angle = 0;
         }
 
