@@ -20,6 +20,7 @@ namespace Chuck_The_Shillelagh {
         public int health;
 
         public int direction = 1;
+        public float angle = 0f;
 
         public Leprechaun() {
             position.X = Globals.ScreenWidth / 2;
@@ -42,15 +43,18 @@ namespace Chuck_The_Shillelagh {
         public override void Update(Game1 game) {
 
             if (!KOd) {
-                MoveAround(Globals.ScreenWidth / 2 - 100, Globals.ScreenWidth / 2 + 100);
+                // MoveBetween(Globals.ScreenWidth / 2 - 100, Globals.ScreenWidth / 2 + 100);
+                ArcBetween(new Vector2(Globals.ScreenWidth / 2, Globals.ScreenHeight - 100),
+                           300, (float) (Math.PI / 4));
             }
-            else { }
+
+            else {
+            }
 
             if (health <= 0) {
                 KOd = true;
             }
-
-
+            
             base.Update(game);
         }
 
@@ -69,11 +73,26 @@ namespace Chuck_The_Shillelagh {
             base.Draw(spriteBatch);
         }
 
-        public void MoveAround(int a, int b) {
+        public void MoveBetween(int a, int b) {
             position.X += velocity_max * direction;
-            if (position.X < a || position.X > b) {
+            if (position.X <= a || position.X >= b) {
                 direction *= -1;
             }
+        }
+
+        public void ArcBetween(Vector2 center, float radius, float angle1, float angle2) {
+            angle += 0.1f * direction;
+
+            position.X = (float) (center.X + radius * Math.Sin(angle));
+            position.Y = (float) (center.Y - radius * Math.Cos(angle));
+
+            if (angle < angle1 || angle > angle2) {
+                direction *= -1;
+            }
+        }
+
+        public void ArcBetween(Vector2 center, float radius, float angleAbs) {
+            ArcBetween(center, radius, -angleAbs, angleAbs);
         }
     }
 
@@ -96,5 +115,4 @@ namespace Chuck_The_Shillelagh {
             velocity_max = 10;
         }
     }
-
 }

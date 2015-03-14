@@ -18,7 +18,7 @@ namespace Chuck_The_Shillelagh {
 
     public class Weapon : Sprite {
         public AnimatedTexture2D anim;
-        public Texture2D pixel;
+        public Texture2D center;
         public WeaponState state = WeaponState.Aiming;
 
         public Vector2 position_center;
@@ -37,7 +37,7 @@ namespace Chuck_The_Shillelagh {
                 anim.textures[i] = Content.Load<Texture2D>("Shillelagh1");
             }
 
-            pixel = Content.Load<Texture2D>("pixel");
+            center = Content.Load<Texture2D>("circle");
 
             base.LoadContent(Content);
         }
@@ -102,7 +102,7 @@ namespace Chuck_The_Shillelagh {
                                         (int) position_center.Y - 5,
                                          10, 10);
 
-            spriteBatch.Draw(pixel, rect_center, Color.Black);
+            spriteBatch.Draw(center, rect_center, Color.Black);
         }
 
         public override void MoveWithGamePad(GamePadState pad1) {

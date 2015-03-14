@@ -30,12 +30,13 @@ namespace Chuck_The_Shillelagh {
         // Game state machine
         // GameState gameState = GameState.TitleScreen;
         public GameState state = GameState.Level1;
+        public int level = 1;
 
         // Game objects
-        public Leprechaun lep1, lep2, lep3;
+        public List<Leprechaun> leps;
         public Weapon weapon;
         public MoodLight mood;
-        public Song Irish;
+        public Song irishMusic;
 
         // I/O states
         public GamePadState pad1, pad1_old;
@@ -56,9 +57,10 @@ namespace Chuck_The_Shillelagh {
             Globals.ScreenWidth = GraphicsDevice.Viewport.Width;
             Globals.ScreenHeight = GraphicsDevice.Viewport.Height;
 
-            lep1 = new LeprechaunLevel1();
-            lep2 = new LeprechaunLevel2();
-            lep3 = new LeprechaunLevel3();
+            // Create list of leprechauns
+            leps = new List<Leprechaun>(0);
+            SetLevel(level);
+
             weapon = new Weapon();
             mood = new MoodLight(77, 126, 249);
 
@@ -74,11 +76,11 @@ namespace Chuck_The_Shillelagh {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             Fonts.LoadContent(Content);
-            lep1.LoadContent(Content);
+            leps.ForEach(delegate(Leprechaun lep) { lep.LoadContent(Content); });
             weapon.LoadContent(Content);
-            Irish = Content.Load<Song>("Irish dancing music Reel");
+            irishMusic = Content.Load<Song>("Irish dancing music Reel");
 
-            MediaPlayer.Play(Irish);
+            MediaPlayer.Play(irishMusic);
         }
 
         /// <summary>
@@ -104,19 +106,21 @@ namespace Chuck_The_Shillelagh {
                 this.Exit();
             }
 
-            lep1.Update(this);
+            leps.ForEach(delegate(Leprechaun lep) { lep.Update(this); });
+
             weapon.Update(this);
+
+            // Collision detection
+            foreach (Leprechaun lep in leps) {
+                if (weapon.rect.Intersects(lep.rect)) {
+                    lep.health -= 1;
+                    weapon.state = WeaponState.Aiming;
+                }
+            }
 
             // Store states for next frame
             pad1_old = pad1;
             kb_old = kb;
-
-            if (weapon.rect.Intersects(lep1.rect))
-            {
-                lep1.health -= 1;
-                weapon.state = WeaponState.Aiming;
-            }
-                
 
             base.Update(gameTime);
         }
@@ -132,11 +136,36 @@ namespace Chuck_The_Shillelagh {
             GraphicsDevice.Clear(color);
 
             spriteBatch.Begin();
-            lep1.Draw(spriteBatch);
+            leps.ForEach(delegate(Leprechaun lep) { lep.Draw(spriteBatch); });
             weapon.Draw(spriteBatch);
             spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        protected void AddLeprechaun(Leprechaun lep) {
+            leps.Add(lep);
+        }
+
+        protected void SetLevel(int level) {
+            leps.Clear();
+            switch(level) {
+            case 1:
+                AddLeprechaun(new LeprechaunLevel1());
+                break;
+            case 2:
+                AddLeprechaun(new LeprechaunLevel2());
+                AddLeprechaun(new LeprechaunLevel2());
+                break;
+            case 3:
+                AddLeprechaun(new LeprechaunLevel3());
+                AddLeprechaun(new LeprechaunLevel3());
+                AddLeprechaun(new LeprechaunLevel3());
+                break;
+            }
+            foreach (Leprechaun lep in leps) {
+                lep.position.X = Globals.rnd.Next(Globals.ScreenWidth / 2 - 100, Globals.ScreenWidth / 2 + 100);
+            }
         }
     }
 }

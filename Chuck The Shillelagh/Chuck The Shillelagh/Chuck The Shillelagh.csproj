@@ -107,6 +107,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Globals\Options.cs" />
     <Compile Include="Globals\Fonts.cs" />
     <Compile Include="Globals\Globals.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
