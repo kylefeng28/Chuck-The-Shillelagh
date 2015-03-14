@@ -12,15 +12,16 @@ using Microsoft.Xna.Framework.Media;
 
 namespace Chuck_The_Shillelagh {
     public class Leprechaun : Sprite {
-        public AnimatedTexture2D anim;
-        public Texture2D healthbar;
-        public Texture2D LepFaint;
+        public static AnimatedTexture2D anim;
+        public static Texture2D healthbar;
+        public static Texture2D texture_fainted;
 
         public bool KOd = false;
         public int health;
 
         public int direction = 1;
         public float angle = 0f;
+        public float angle_max = (float) (Math.PI / 4);
 
         public Leprechaun() {
             position.X = Globals.ScreenWidth / 2;
@@ -35,7 +36,7 @@ namespace Chuck_The_Shillelagh {
             }
 
             healthbar = Content.Load<Texture2D>("pixel");
-            LepFaint = Content.Load<Texture2D>("LepFainted");
+            texture_fainted = Content.Load<Texture2D>("LepFainted");
 
             base.LoadContent(Content);
         }
@@ -45,7 +46,7 @@ namespace Chuck_The_Shillelagh {
             if (!KOd) {
                 // MoveBetween(Globals.ScreenWidth / 2 - 100, Globals.ScreenWidth / 2 + 100);
                 ArcBetween(new Vector2(Globals.ScreenWidth / 2, Globals.ScreenHeight - 100),
-                           300, (float) (Math.PI / 4));
+                           300, angle_max);
             }
 
             else {
@@ -64,7 +65,7 @@ namespace Chuck_The_Shillelagh {
             }
 
             else {
-                texture = LepFaint;
+                texture = texture_fainted;
             }
 
             Rectangle health_rect = new Rectangle(rect.X, rect.Y, 10 * health, 10);
@@ -81,7 +82,7 @@ namespace Chuck_The_Shillelagh {
         }
 
         public void ArcBetween(Vector2 center, float radius, float angle1, float angle2) {
-            angle += 0.1f * direction;
+            angle += velocity_max / 200 * direction;
 
             position.X = (float) (center.X + radius * Math.Sin(angle));
             position.Y = (float) (center.Y - radius * Math.Cos(angle));

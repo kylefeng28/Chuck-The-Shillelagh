@@ -12,9 +12,7 @@ using Microsoft.Xna.Framework.Media;
 namespace Chuck_The_Shillelagh {
     public enum GameState {
         TitleScreen,
-        Level1,
-        Level2,
-        Level3,
+        Playing,
         Paused,
         GameLost,
         GameWon,
@@ -76,7 +74,11 @@ namespace Chuck_The_Shillelagh {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             Fonts.LoadContent(Content);
-            leps.ForEach(delegate(Leprechaun lep) { lep.LoadContent(Content); });
+
+            foreach (Leprechaun lep in leps) {
+                lep.LoadContent(Content);
+            }
+
             weapon.LoadContent(Content);
             irishMusic = Content.Load<Song>("Irish dancing music Reel");
 
@@ -100,13 +102,24 @@ namespace Chuck_The_Shillelagh {
             // Get current states
             pad1 = GamePad.GetState(PlayerIndex.One);
             kb = Keyboard.GetState();
-            
+
             // Allows the game to exit
             if (pad1.Buttons.Back == ButtonState.Pressed) {
                 this.Exit();
             }
 
-            leps.ForEach(delegate(Leprechaun lep) { lep.Update(this); });
+            foreach (Leprechaun lep in leps) {
+                lep.Update(this);
+            }
+
+            // Find how many leprechauns are knocked out
+            int KOcounter = leps.Sum(x => x.KOd ? 1 : 0);
+
+            // All leprechauns are knocked out
+            if (KOcounter == leps.Count) {
+                level++; // Increment level
+                SetLevel(level);
+            }
 
             weapon.Update(this);
 
@@ -136,11 +149,26 @@ namespace Chuck_The_Shillelagh {
             GraphicsDevice.Clear(color);
 
             spriteBatch.Begin();
-            leps.ForEach(delegate(Leprechaun lep) { lep.Draw(spriteBatch); });
+            
+            foreach (Leprechaun lep in leps) {
+                lep.Draw(spriteBatch);
+            }
+
             weapon.Draw(spriteBatch);
+
+            spriteBatch.DrawString(Fonts.Dialog, "Level " + level.ToString(), Vector2.Zero, InvertColor(color));
+
             spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        protected Color InvertColor(Color color) {
+            Color invColor = color;
+            invColor.R = (byte) (~color.R);
+            invColor.G = (byte) (~color.G);
+            invColor.B = (byte) (~color.B);
+            return invColor;
         }
 
         protected void AddLeprechaun(Leprechaun lep) {
@@ -164,7 +192,8 @@ namespace Chuck_The_Shillelagh {
                 break;
             }
             foreach (Leprechaun lep in leps) {
-                lep.position.X = Globals.rnd.Next(Globals.ScreenWidth / 2 - 100, Globals.ScreenWidth / 2 + 100);
+                // lep.position.X = Globals.rnd.Next(Globals.ScreenWidth / 2 - 100, Globals.ScreenWidth / 2 + 100);
+                lep.angle = (float) (lep.angle_max * Globals.rnd.NextDouble());
             }
         }
     }

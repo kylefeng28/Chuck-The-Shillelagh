@@ -17,8 +17,8 @@ namespace Chuck_The_Shillelagh {
     }
 
     public class Weapon : Sprite {
-        public AnimatedTexture2D anim;
-        public Texture2D center;
+        public static AnimatedTexture2D anim;
+        public static Texture2D center;
         public WeaponState state = WeaponState.Aiming;
 
         public Vector2 position_center;
