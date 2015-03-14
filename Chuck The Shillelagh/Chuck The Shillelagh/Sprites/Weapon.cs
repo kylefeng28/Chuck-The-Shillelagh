@@ -48,20 +48,29 @@ namespace Chuck_The_Shillelagh {
                 MoveWithKeyboard(game.kb);
                 MoveWithGamePad(game.pad1);
 
+                // Bounds checking
+                if (position_center.X < 0) {
+                    position_center.X = 0;
+                }
+                if (position_center.X > Globals.ScreenWidth) {
+                    position_center.X = Globals.ScreenWidth;
+                }
+
+                if (Math.Abs(angle) > Math.PI / 2) {
+                    angle = (float) (Math.Sign(angle) * Math.PI / 2);
+                }
+
+                // Update shillelagh position
                 position.X = (float) (rect_center.Center.X + 50 * Math.Sin(angle));
                 position.Y = (float) (rect_center.Center.Y - 50 * Math.Cos(angle));
 
-                if (game.kb.IsKeyDown(Keys.Space)) {
-                    state = WeaponState.Moving;
-                }
-                if (game.pad1.Triggers.Right > .5)
-                {
+                // Change state
+                if ((game.kb.IsKeyDown(Keys.Space)) || (game.pad1.Triggers.Right > .5)) {
                     state = WeaponState.Moving;
                 }
                 break;
 
             case WeaponState.Moving:
-
                 position.X += (float) (velocity_max * Math.Sin(angle));
                 position.Y -= (float) (velocity_max * Math.Cos(angle));
 
