@@ -116,6 +116,7 @@
     <Compile Include="Sprites\AnimatedTexture2D.cs" />
     <Compile Include="Sprites\Leprechaun.cs" />
     <Compile Include="Sprites\MoodLight.cs" />
+    <Compile Include="Sprites\Screen.cs" />
     <Compile Include="Sprites\Sprite.cs" />
     <Compile Include="Sprites\Weapon.cs" />
   </ItemGroup>

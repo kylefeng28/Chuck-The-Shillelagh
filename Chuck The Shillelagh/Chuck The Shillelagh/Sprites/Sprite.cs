@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 
 namespace Chuck_The_Shillelagh {
-    public class Sprite {
+    public abstract class Sprite {
         public Texture2D texture;
         public Rectangle rect;
         public float scale = 1;

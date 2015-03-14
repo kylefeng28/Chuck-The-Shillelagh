@@ -16,7 +16,7 @@ namespace Chuck_The_Shillelagh {
         Moving,
     }
 
-    public class Weapon : Sprite {
+    public abstract class Weapon : Sprite {
         public static AnimatedTexture2D anim;
         public static Texture2D center;
         public WeaponState state = WeaponState.Aiming;
@@ -32,11 +32,6 @@ namespace Chuck_The_Shillelagh {
         }
 
         public override void LoadContent(ContentManager Content) {
-            anim = new AnimatedTexture2D(1, 10);
-            for (int i = 0; i < anim.textures.Length; i++) {
-                anim.textures[i] = Content.Load<Texture2D>("Shillelagh1");
-            }
-
             center = Content.Load<Texture2D>("circle");
 
             base.LoadContent(Content);
@@ -141,5 +136,17 @@ namespace Chuck_The_Shillelagh {
             angle = 0;
         }
 
+    }
+
+    // Child classes
+    public class Shillelagh : Weapon {
+        public override void LoadContent(ContentManager Content) {
+            anim = new AnimatedTexture2D(1, 10);
+            for (int i = 0; i < anim.textures.Length; i++) {
+                anim.textures[i] = Content.Load<Texture2D>("Shillelagh1");
+            }
+
+            base.LoadContent(Content);
+        }
     }
 }

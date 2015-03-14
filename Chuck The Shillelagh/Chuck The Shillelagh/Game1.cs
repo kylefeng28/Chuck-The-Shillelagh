@@ -13,7 +13,6 @@ namespace Chuck_The_Shillelagh {
     public enum GameState {
         TitleScreen,
         Playing,
-        Paused,
         GameLost,
         GameWon,
     }
@@ -26,11 +25,12 @@ namespace Chuck_The_Shillelagh {
         SpriteBatch spriteBatch;
 
         // Game state machine
-        // GameState gameState = GameState.TitleScreen;
-        public GameState state = GameState.Level1;
+        public GameState state = GameState.TitleScreen;
         public int level = 1;
+        public const int level_max = 3;
 
         // Game objects
+        public Screen titleScreen;
         public List<Leprechaun> leps;
         public Weapon weapon;
         public MoodLight mood;
@@ -55,11 +55,13 @@ namespace Chuck_The_Shillelagh {
             Globals.ScreenWidth = GraphicsDevice.Viewport.Width;
             Globals.ScreenHeight = GraphicsDevice.Viewport.Height;
 
+            titleScreen = new TitleScreen();
+
             // Create list of leprechauns
             leps = new List<Leprechaun>(0);
             SetLevel(level);
 
-            weapon = new Weapon();
+            weapon = new Shillelagh();
             mood = new MoodLight(77, 126, 249);
 
             base.Initialize();
@@ -74,6 +76,8 @@ namespace Chuck_The_Shillelagh {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             Fonts.LoadContent(Content);
+
+            titleScreen.LoadContent(Content);
 
             foreach (Leprechaun lep in leps) {
                 lep.LoadContent(Content);
@@ -108,27 +112,35 @@ namespace Chuck_The_Shillelagh {
                 this.Exit();
             }
 
-            foreach (Leprechaun lep in leps) {
-                lep.Update(this);
-            }
+            switch (state) {
+            case GameState.TitleScreen:
+                titleScreen.Update(this);
+                break;
+                
 
-            // Find how many leprechauns are knocked out
-            int KOcounter = leps.Sum(x => x.KOd ? 1 : 0);
-
-            // All leprechauns are knocked out
-            if (KOcounter == leps.Count) {
-                level++; // Increment level
-                SetLevel(level);
-            }
-
-            weapon.Update(this);
-
-            // Collision detection
-            foreach (Leprechaun lep in leps) {
-                if (weapon.rect.Intersects(lep.rect)) {
-                    lep.health -= 1;
-                    weapon.state = WeaponState.Aiming;
+            case GameState.Playing:
+                foreach (Leprechaun lep in leps) {
+                    lep.Update(this);
                 }
+
+                // Find how many leprechauns are knocked out
+                int KOcounter = leps.Sum(x => x.KOd ? 1 : 0);
+
+                // All leprechauns are knocked out
+                if (KOcounter == leps.Count) {
+                    IncreaseLevel();
+                }
+
+                weapon.Update(this);
+
+                // Collision detection
+                foreach (Leprechaun lep in leps) {
+                    if (weapon.rect.Intersects(lep.rect)) {
+                        lep.health -= 1;
+                        weapon.state = WeaponState.Aiming;
+                    }
+                }
+                break;
             }
 
             // Store states for next frame
@@ -149,14 +161,22 @@ namespace Chuck_The_Shillelagh {
             GraphicsDevice.Clear(color);
 
             spriteBatch.Begin();
-            
-            foreach (Leprechaun lep in leps) {
-                lep.Draw(spriteBatch);
+
+            switch (state) {
+            case GameState.TitleScreen:
+                titleScreen.Draw(spriteBatch);
+                break;
+                
+            case GameState.Playing:
+                foreach (Leprechaun lep in leps) {
+                    lep.Draw(spriteBatch);
+                }
+
+                weapon.Draw(spriteBatch);
+
+                spriteBatch.DrawString(Fonts.Dialog, "Level " + level.ToString(), Vector2.Zero, InvertColor(color));
+                break;
             }
-
-            weapon.Draw(spriteBatch);
-
-            spriteBatch.DrawString(Fonts.Dialog, "Level " + level.ToString(), Vector2.Zero, InvertColor(color));
 
             spriteBatch.End();
 
@@ -180,21 +200,44 @@ namespace Chuck_The_Shillelagh {
             switch(level) {
             case 1:
                 AddLeprechaun(new LeprechaunLevel1());
+                leps[0].angle = 0f;
                 break;
             case 2:
                 AddLeprechaun(new LeprechaunLevel2());
                 AddLeprechaun(new LeprechaunLevel2());
+                leps[0].angle = -leps[0].angle_max;
+                leps[1].angle = leps[0].angle_max;
                 break;
             case 3:
                 AddLeprechaun(new LeprechaunLevel3());
                 AddLeprechaun(new LeprechaunLevel3());
                 AddLeprechaun(new LeprechaunLevel3());
+                leps[0].angle = -0.5f * leps[0].angle_max;
+                leps[1].angle = 0f;
+                leps[2].angle = 0.5f * leps[0].angle_max;
                 break;
             }
+            /*
             foreach (Leprechaun lep in leps) {
                 // lep.position.X = Globals.rnd.Next(Globals.ScreenWidth / 2 - 100, Globals.ScreenWidth / 2 + 100);
-                lep.angle = (float) (lep.angle_max * Globals.rnd.NextDouble());
             }
+            */
+        }
+
+        protected void IncreaseLevel() {
+            if (level < level_max) {
+                level++;
+                SetLevel(level);
+            }
+            else {
+                state = GameState.GameWon;
+            }
+        }
+
+        // TODO
+        int dialogTimer = 0;
+        protected void DisplayDialog(string msg, int t) {
+            
         }
     }
 }
