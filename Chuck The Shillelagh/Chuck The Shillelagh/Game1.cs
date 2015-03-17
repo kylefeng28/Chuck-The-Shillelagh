@@ -136,7 +136,7 @@ namespace Chuck_The_Shillelagh {
                 }
 
                 // Player ran out of ammo
-                if (weapon.ammo < 0) {
+                if (weapon.ammo <= 0) {
                     state = GameState.GameLost;
                 }
 
@@ -185,7 +185,7 @@ namespace Chuck_The_Shillelagh {
                 playingScreen.Draw(spriteBatch);
 
                 // Level indicator
-                spriteBatch.DrawString(Fonts.Dialog, "Level " + level.ToString(), Vector2.Zero, InvertColor(playingScreen.color));
+                spriteBatch.DrawString(Fonts.Dialog, "Level " + level.ToString(), Vector2.Zero, Color.White);
 
                 // Rainbow mode
                 if (level >= 3) {
@@ -212,14 +212,6 @@ namespace Chuck_The_Shillelagh {
             spriteBatch.End();
 
             base.Draw(gameTime);
-        }
-
-        protected Color InvertColor(Color color) {
-            Color invColor = color;
-            invColor.R = (byte) (~color.R);
-            invColor.G = (byte) (~color.G);
-            invColor.B = (byte) (~color.B);
-            return invColor;
         }
 
         protected void AddLeprechaun(Leprechaun lep) {

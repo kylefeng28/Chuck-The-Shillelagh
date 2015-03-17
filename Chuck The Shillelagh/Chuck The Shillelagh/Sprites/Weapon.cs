@@ -100,6 +100,9 @@ namespace Chuck_The_Shillelagh {
                                          10, 10);
 
             spriteBatch.Draw(center, rect_center, Color.Black);
+
+            // Indicate ammo
+            spriteBatch.DrawString(Fonts.Dialog, "Ammo: " + ammo.ToString(), new Vector2(0, 30), Color.White);
         }
 
         public override void MoveWithGamePad(GamePadState pad1) {
