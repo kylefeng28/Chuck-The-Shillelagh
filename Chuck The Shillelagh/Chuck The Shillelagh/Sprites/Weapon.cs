@@ -21,6 +21,8 @@ namespace Chuck_The_Shillelagh {
         public static Texture2D center;
         public WeaponState state = WeaponState.Aiming;
 
+        public int ammo;
+
         public Vector2 position_center;
         public Rectangle rect_center;
         public float angle = 0.0f;
@@ -61,7 +63,7 @@ namespace Chuck_The_Shillelagh {
 
                 // Change state
                 if ((game.kb.IsKeyDown(Keys.Space)) || (game.pad1.Triggers.Right > .5)) {
-                    state = WeaponState.Moving;
+                    Shoot();
                 }
                 break;
 
@@ -128,6 +130,11 @@ namespace Chuck_The_Shillelagh {
             if (kb.IsKeyDown(Keys.Left)) {
                 position_center.X -= velocity_max / 3;
             }
+        }
+
+        public void Shoot() {
+            state = WeaponState.Moving;
+            ammo--;
         }
 
         public void ResetPosition() {

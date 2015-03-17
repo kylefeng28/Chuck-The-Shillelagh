@@ -29,8 +29,13 @@ namespace Chuck_The_Shillelagh {
         public int level = 1;
         public const int level_max = 3;
 
+        // Screens
+        public TitleScreen titleScreen;
+        public PlayingScreen playingScreen;
+        public GameLostScreen gameLostScreen;
+        public GameWonScreen gameWonScreen;
+
         // Game objects
-        public Screen titleScreen;
         public List<Leprechaun> leps;
         public Weapon weapon;
         public MoodLight mood;
@@ -55,14 +60,18 @@ namespace Chuck_The_Shillelagh {
             Globals.ScreenWidth = GraphicsDevice.Viewport.Width;
             Globals.ScreenHeight = GraphicsDevice.Viewport.Height;
 
+            // Initialize screens
             titleScreen = new TitleScreen();
+            playingScreen = new PlayingScreen();
+            gameLostScreen = new GameLostScreen();
+            gameWonScreen = new GameWonScreen();
+            mood = new MoodLight(77, 126, 249);
 
             // Create list of leprechauns
             leps = new List<Leprechaun>(0);
-            SetLevel(level);
-
             weapon = new Shillelagh();
-            mood = new MoodLight(77, 126, 249);
+
+            SetLevel(level);
 
             base.Initialize();
         }
@@ -78,6 +87,9 @@ namespace Chuck_The_Shillelagh {
             Fonts.LoadContent(Content);
 
             titleScreen.LoadContent(Content);
+            playingScreen.LoadContent(Content);
+            gameLostScreen.LoadContent(Content);
+            gameWonScreen.LoadContent(Content);
 
             foreach (Leprechaun lep in leps) {
                 lep.LoadContent(Content);
@@ -123,12 +135,19 @@ namespace Chuck_The_Shillelagh {
                     lep.Update(this);
                 }
 
-                // Find how many leprechauns are knocked out
-                int KOcounter = leps.Sum(x => x.KOd ? 1 : 0);
+                // Player ran out of ammo
+                if (weapon.ammo <= 0) {
 
-                // All leprechauns are knocked out
-                if (KOcounter == leps.Count) {
-                    IncreaseLevel();
+                    // Find how many leprechauns are knocked out
+                    int KOcounter = leps.Sum(x => x.KOd ? 1 : 0);
+
+                    // All leprechauns are knocked out
+                    if (KOcounter == leps.Count) {
+                        IncreaseLevel();
+                    }
+                    else {
+                        state = GameState.GameLost;
+                    }
                 }
 
                 weapon.Update(this);
@@ -155,10 +174,7 @@ namespace Chuck_The_Shillelagh {
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime) {
-            Color color = mood.color;
-            // Color color = mood.NextColor();
-
-            GraphicsDevice.Clear(color);
+            GraphicsDevice.Clear(Color.CornflowerBlue);
 
             spriteBatch.Begin();
 
@@ -166,15 +182,29 @@ namespace Chuck_The_Shillelagh {
             case GameState.TitleScreen:
                 titleScreen.Draw(spriteBatch);
                 break;
-                
+
             case GameState.Playing:
+                playingScreen.Draw(spriteBatch);
+
+                if (level >= 3) {
+                    playingScreen.color = mood.color; // Color color = mood.NextColor();
+                }
+
                 foreach (Leprechaun lep in leps) {
                     lep.Draw(spriteBatch);
                 }
 
                 weapon.Draw(spriteBatch);
 
-                spriteBatch.DrawString(Fonts.Dialog, "Level " + level.ToString(), Vector2.Zero, InvertColor(color));
+                spriteBatch.DrawString(Fonts.Dialog, "Level " + level.ToString(), Vector2.Zero, InvertColor(playingScreen.color));
+                break;
+
+            case GameState.GameLost:
+                gameLostScreen.Draw(spriteBatch);
+                break;
+
+            case GameState.GameWon:
+                gameWonScreen.Draw(spriteBatch);
                 break;
             }
 
@@ -201,12 +231,14 @@ namespace Chuck_The_Shillelagh {
             case 1:
                 AddLeprechaun(new LeprechaunLevel1());
                 leps[0].angle = 0f;
+                weapon.ammo = 8;
                 break;
             case 2:
                 AddLeprechaun(new LeprechaunLevel2());
                 AddLeprechaun(new LeprechaunLevel2());
                 leps[0].angle = -leps[0].angle_max;
                 leps[1].angle = leps[0].angle_max;
+                weapon.ammo = 12;
                 break;
             case 3:
                 AddLeprechaun(new LeprechaunLevel3());
@@ -215,6 +247,7 @@ namespace Chuck_The_Shillelagh {
                 leps[0].angle = -0.5f * leps[0].angle_max;
                 leps[1].angle = 0f;
                 leps[2].angle = 0.5f * leps[0].angle_max;
+                weapon.ammo = 15;
                 break;
             }
             /*

@@ -31,9 +31,6 @@ namespace Chuck_The_Shillelagh {
     }
 
     public class TitleScreen : Screen {
-        public TitleScreen() {
-        }
-
         public override void LoadContent(ContentManager Content) {
             bg = Content.Load<Texture2D>("TitleText");
             
@@ -46,6 +43,36 @@ namespace Chuck_The_Shillelagh {
             }
             
             base.Update(game);
+        }
+    }
+
+    public class PlayingScreen : Screen {
+        public Color color = Color.White;
+
+        public override void LoadContent(ContentManager Content) {
+            bg = Content.Load<Texture2D>("Background");
+            
+            base.LoadContent(Content);
+        }
+
+        public new void Draw(SpriteBatch spriteBatch) {
+            spriteBatch.Draw(bg, rect, color);
+        }
+    }
+
+    public class GameWonScreen : Screen {
+        public override void LoadContent(ContentManager Content) {
+            bg = Content.Load<Texture2D>("GameWonText");
+
+            base.LoadContent(Content);
+        }
+    }
+
+    public class GameLostScreen : Screen {
+        public override void LoadContent(ContentManager Content) {
+            bg = Content.Load<Texture2D>("GameLostText");
+
+            base.LoadContent(Content);
         }
     }
 }
