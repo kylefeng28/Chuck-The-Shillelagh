@@ -13,8 +13,8 @@ namespace Chuck_The_Shillelagh {
     public enum GameState {
         TitleScreen,
         Playing,
-        GameLost,
         GameWon,
+        GameLost,
     }
 
     /// <summary>
@@ -120,7 +120,7 @@ namespace Chuck_The_Shillelagh {
             kb = Keyboard.GetState();
 
             // Allows the game to exit
-            if (pad1.Buttons.Back == ButtonState.Pressed) {
+            if (pad1.Buttons.Back == ButtonState.Pressed || kb.IsKeyDown(Keys.Escape)) {
                 this.Exit();
             }
 
@@ -136,18 +136,16 @@ namespace Chuck_The_Shillelagh {
                 }
 
                 // Player ran out of ammo
-                if (weapon.ammo <= 0) {
+                if (weapon.ammo < 0) {
+                    state = GameState.GameLost;
+                }
 
-                    // Find how many leprechauns are knocked out
-                    int KOcounter = leps.Sum(x => x.KOd ? 1 : 0);
+                // Find how many leprechauns are knocked out
+                int KOcounter = leps.Sum(x => x.KOd ? 1 : 0);
 
-                    // All leprechauns are knocked out
-                    if (KOcounter == leps.Count) {
-                        IncreaseLevel();
-                    }
-                    else {
-                        state = GameState.GameLost;
-                    }
+                // All leprechauns are knocked out
+                if (KOcounter == leps.Count) {
+                    IncreaseLevel();
                 }
 
                 weapon.Update(this);
@@ -186,6 +184,10 @@ namespace Chuck_The_Shillelagh {
             case GameState.Playing:
                 playingScreen.Draw(spriteBatch);
 
+                // Level indicator
+                spriteBatch.DrawString(Fonts.Dialog, "Level " + level.ToString(), Vector2.Zero, InvertColor(playingScreen.color));
+
+                // Rainbow mode
                 if (level >= 3) {
                     playingScreen.color = mood.color; // Color color = mood.NextColor();
                 }
@@ -196,7 +198,6 @@ namespace Chuck_The_Shillelagh {
 
                 weapon.Draw(spriteBatch);
 
-                spriteBatch.DrawString(Fonts.Dialog, "Level " + level.ToString(), Vector2.Zero, InvertColor(playingScreen.color));
                 break;
 
             case GameState.GameLost:

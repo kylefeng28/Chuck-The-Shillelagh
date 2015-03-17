@@ -12,8 +12,8 @@ using Microsoft.Xna.Framework.Media;
 
 namespace Chuck_The_Shillelagh {
     public abstract class Screen {
-        public Texture2D bg;
-        public Rectangle rect;
+        protected Texture2D bg;
+        protected Rectangle rect;
 
         public Screen() {
             rect = new Rectangle(0, 0, Globals.ScreenWidth, Globals.ScreenHeight);
@@ -26,14 +26,20 @@ namespace Chuck_The_Shillelagh {
         }
 
         public virtual void Draw(SpriteBatch spriteBatch) {
-            spriteBatch.Draw(bg, rect, Color.White);
+            if (bg != null) {
+                spriteBatch.Draw(bg, rect, Color.White);
+            }
         }
     }
 
     public class TitleScreen : Screen {
+        protected Texture2D text;
+        protected Vector2 textPos;
+
         public override void LoadContent(ContentManager Content) {
-            bg = Content.Load<Texture2D>("TitleText");
-            
+            text = Content.Load<Texture2D>("TitleText");
+            textPos = new Vector2(rect.Center.X - text.Width / 2, 20);
+
             base.LoadContent(Content);
         }
 
@@ -43,6 +49,12 @@ namespace Chuck_The_Shillelagh {
             }
             
             base.Update(game);
+        }
+
+        public override void Draw(SpriteBatch spriteBatch) {
+            spriteBatch.Draw(text, textPos, Color.White);
+            
+            base.Draw(spriteBatch);
         }
     }
 
@@ -61,18 +73,45 @@ namespace Chuck_The_Shillelagh {
     }
 
     public class GameWonScreen : Screen {
+        protected Texture2D text;
+        protected Vector2 textPos;
+
+        protected Texture2D potOfGold;
+        protected Vector2 potOfGoldPos;
+
         public override void LoadContent(ContentManager Content) {
-            bg = Content.Load<Texture2D>("GameWonText");
+            text = Content.Load<Texture2D>("GameWonText");
+            textPos = new Vector2(rect.Center.X - text.Width / 2, 20);
+
+            potOfGold = Content.Load<Texture2D>("Pot O Gold");
+            potOfGoldPos = new Vector2(rect.Center.X - potOfGold.Width / 2, 160);
 
             base.LoadContent(Content);
+        }
+
+        public override void Draw(SpriteBatch spriteBatch) {
+            spriteBatch.Draw(text, textPos, Color.White);
+            spriteBatch.Draw(potOfGold, potOfGoldPos, Color.White);
+
+            base.Draw(spriteBatch);
         }
     }
 
     public class GameLostScreen : Screen {
+        protected Texture2D text;
+        protected Vector2 textPos;
+
         public override void LoadContent(ContentManager Content) {
-            bg = Content.Load<Texture2D>("GameLostText");
+            text = Content.Load<Texture2D>("GameLostText");
+            textPos = new Vector2(rect.Center.X - text.Width / 2, 20);
 
             base.LoadContent(Content);
+        }
+
+        public override void Draw(SpriteBatch spriteBatch) {
+            spriteBatch.Draw(text, textPos, Color.White);
+
+            base.Draw(spriteBatch);
         }
     }
 }
