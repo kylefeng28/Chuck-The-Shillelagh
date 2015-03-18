@@ -26,7 +26,7 @@ namespace Chuck_The_Shillelagh {
 
         // Game state machine
         public GameState state = GameState.TitleScreen;
-        public int level = 1;
+        public int level;
         public const int level_max = 3;
 
         // Screens
@@ -57,6 +57,8 @@ namespace Chuck_The_Shillelagh {
         /// and initialize them as well.
         /// </summary>
         protected override void Initialize() {
+            level = 1;
+
             Globals.ScreenWidth = GraphicsDevice.Viewport.Width;
             Globals.ScreenHeight = GraphicsDevice.Viewport.Height;
 
@@ -156,6 +158,13 @@ namespace Chuck_The_Shillelagh {
                         lep.health -= 1;
                         weapon.state = WeaponState.Aiming;
                     }
+                }
+                break;
+
+            case GameState.GameLost:
+                if (pad1.IsButtonDown(Buttons.Start)) {
+                    state = GameState.TitleScreen;
+                    Initialize();
                 }
                 break;
             }

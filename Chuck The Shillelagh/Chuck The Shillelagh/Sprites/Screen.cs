@@ -13,10 +13,10 @@ using Microsoft.Xna.Framework.Media;
 namespace Chuck_The_Shillelagh {
     public abstract class Screen {
         protected Texture2D bg;
-        protected Rectangle rect;
+        protected Rectangle bgRect;
 
         public Screen() {
-            rect = new Rectangle(0, 0, Globals.ScreenWidth, Globals.ScreenHeight);
+            bgRect = new Rectangle(0, 0, Globals.ScreenWidth, Globals.ScreenHeight);
         }
 
         public virtual void LoadContent(ContentManager Content) {
@@ -27,24 +27,30 @@ namespace Chuck_The_Shillelagh {
 
         public virtual void Draw(SpriteBatch spriteBatch) {
             if (bg != null) {
-                spriteBatch.Draw(bg, rect, Color.White);
+                spriteBatch.Draw(bg, bgRect, Color.White);
             }
         }
     }
 
     public class TitleScreen : Screen {
-        protected Texture2D text;
+        protected Texture2D titleText;
+        protected Vector2 titlePos;
+        protected string text;
         protected Vector2 textPos;
 
         public override void LoadContent(ContentManager Content) {
-            text = Content.Load<Texture2D>("TitleText");
-            textPos = new Vector2(rect.Center.X - text.Width / 2, 20);
+            titleText = Content.Load<Texture2D>("TitleText");
+            titlePos = new Vector2(bgRect.Center.X - titleText.Width / 2, 20);
+
+            text = "Press start to begin";
+            textPos = new Vector2(bgRect.Center.X - Fonts.Dialog.MeasureString(text).X,
+                                  bgRect.Center.Y - Fonts.Dialog.MeasureString(text).Y);
 
             base.LoadContent(Content);
         }
 
         public override void Update(Game1 game) {
-            if (game.kb.IsKeyDown(Keys.Enter) || game.pad1.IsButtonDown(Buttons.Start)) {
+            if (game.kb.IsKeyDown(Keys.Enter) || game.pad1.IsButtonDown(Buttons.Start) && game.pad1_old.IsButtonUp(Buttons.Start)) {
                 game.state = GameState.Playing;
             }
             
@@ -52,7 +58,9 @@ namespace Chuck_The_Shillelagh {
         }
 
         public override void Draw(SpriteBatch spriteBatch) {
-            spriteBatch.Draw(text, textPos, Color.White);
+            spriteBatch.Draw(titleText, titlePos, Color.White);
+
+            spriteBatch.DrawString(Fonts.Dialog, text, textPos, Color.White);
             
             base.Draw(spriteBatch);
         }
@@ -68,7 +76,7 @@ namespace Chuck_The_Shillelagh {
         }
 
         public new void Draw(SpriteBatch spriteBatch) {
-            spriteBatch.Draw(bg, rect, color);
+            spriteBatch.Draw(bg, bgRect, color);
         }
     }
 
@@ -81,10 +89,10 @@ namespace Chuck_The_Shillelagh {
 
         public override void LoadContent(ContentManager Content) {
             text = Content.Load<Texture2D>("GameWonText");
-            textPos = new Vector2(rect.Center.X - text.Width / 2, 20);
+            textPos = new Vector2(bgRect.Center.X - text.Width / 2, 20);
 
             potOfGold = Content.Load<Texture2D>("Pot O Gold");
-            potOfGoldPos = new Vector2(rect.Center.X - potOfGold.Width / 2, 160);
+            potOfGoldPos = new Vector2(bgRect.Center.X - potOfGold.Width / 2, 160);
 
             base.LoadContent(Content);
         }
@@ -103,7 +111,7 @@ namespace Chuck_The_Shillelagh {
 
         public override void LoadContent(ContentManager Content) {
             text = Content.Load<Texture2D>("GameLostText");
-            textPos = new Vector2(rect.Center.X - text.Width / 2, 20);
+            textPos = new Vector2(bgRect.Center.X - text.Width / 2, 20);
 
             base.LoadContent(Content);
         }
